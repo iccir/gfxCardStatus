@@ -43,8 +43,43 @@ static id<GSGPUDelegate> _delegate = nil;
 
 #pragma mark - Static C methods
 
+static NSString *_stringForDisplayChangeSummaryFlags(CGDisplayChangeSummaryFlags flags)
+{
+    static NSDictionary *map = nil;
+    NSMutableArray *results = [NSMutableArray array];
+
+    if (!map) {
+        map = @{
+            @0: @"BeginConfiguration",
+            @1: @"Moved",
+            @2: @"SetMain",
+            @3: @"SetMode",
+            @4: @"Add",
+            @5: @"Remove",
+            @8: @"Enabled",
+            @9: @"Disabled",
+            @10: @"Mirror",
+            @11: @"UnMirror",
+            @12: @"DesktopShapeChanged"
+        };
+    }
+
+    for (NSInteger i = 0; i < 32; i++) {
+        if (flags & (1 << i)) {
+            NSString *string = [map objectForKey:@(i)];
+            if (!string) string = [NSString stringWithFormat:@"Bit%ld", (long)i];
+            [results addObject:string];
+        }
+    }
+    
+    return [results componentsJoinedByString:@", "];
+}
+
+
 static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
+    GTMLoggerInfo(@"Display reconfiguration callback: %x, %@", display, _stringForDisplayChangeSummaryFlags(flags));
+
     // If we got a display reconfiguration callback for a display that's not
     // built-in, we should probably just kick the user over to Dynamic Switching
     // if they're on a non-legacy machine. Not sure how often this method will
@@ -108,8 +143,11 @@ static void _displayReconfigurationCallback(CGDirectDisplayID display, CGDisplay
                 if (CFGetTypeID(ioName) == CFStringGetTypeID() && CFStringCompare(ioName, CFSTR(kDisplayKey), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
                     const void *model = CFDictionaryGetValue(serviceDictionary, @kModelKey);
                     
-                    NSString *gpuName = [[NSString alloc] initWithData:(__bridge NSData *)model 
+                    NSString *gpuName = [[NSString alloc] initWithData:(__bridge NSData *)model
                                                               encoding:NSASCIIStringEncoding];
+                    
+                    // 2013 MacBook Pro returns "Intel Iris Pro\000", which is messing up logging
+                    gpuName = [gpuName stringByReplacingOccurrencesOfString:@"\000" withString:@""];
                     
                     [_cachedGPUs addObject:gpuName];
                 }
