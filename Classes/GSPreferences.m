@@ -16,6 +16,9 @@
 #define kPowerSourceBasedSwitchingACMode        @"GPUSetting_ACAdaptor"
 #define kPowerSourceBasedSwitchingBatteryMode   @"GPUSetting_Battery"
 
+#define kLastExplicitModeKey                    @"lastExplicitMode"
+#define kShouldUseLastExplicitModeOnLaunchKey   @"shouldUseLastExplicitModeOnLaunch"
+
 #define kShouldStartAtLoginKey                  @"shouldStartAtLogin"
 #define kShouldUseImageIconsKey                 @"shouldUseImageIcons"
 #define kShouldCheckForUpdatesOnStartupKey      @"shouldCheckForUpdatesOnStartup"
@@ -101,6 +104,9 @@
     _prefsDict[kShouldDisplayNotificationsKey] = @YES;
     _prefsDict[kShouldUsePowerSourceBasedSwitchingKey] = @NO;
     _prefsDict[kShouldUseSmartMenuBarIconsKey] = @NO;
+
+    _prefsDict[kShouldUseLastExplicitModeOnLaunchKey] = @(NO);
+    _prefsDict[kLastExplicitModeKey] = @(GSPowerSourceBasedSwitchingModeDynamic);
     
     _prefsDict[kPowerSourceBasedSwitchingBatteryMode] = @(GSPowerSourceBasedSwitchingModeIntegrated);
     if ([GSGPU isLegacyMachine])
@@ -160,6 +166,22 @@
 - (BOOL)shouldUseSmartMenuBarIcons
 {
     return [_prefsDict[kShouldUseSmartMenuBarIconsKey] boolValue];
+}
+
+- (BOOL)shouldUseLastExplicitModeOnLaunch
+{
+    return [_prefsDict[kShouldUseLastExplicitModeOnLaunchKey] boolValue];
+}
+
+- (void)setLastExplicitMode:(GSPowerSourceBasedSwitchingMode)mode
+{
+    _prefsDict[kLastExplicitModeKey] = @(mode);
+    [self savePreferences];
+}
+
+- (GSPowerSourceBasedSwitchingMode)lastExplicitMode
+{
+    return [_prefsDict[kLastExplicitModeKey] intValue];
 }
 
 - (GSPowerSourceBasedSwitchingMode)modeForACAdapter

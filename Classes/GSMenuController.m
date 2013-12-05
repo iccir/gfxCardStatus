@@ -215,16 +215,19 @@
 
         GTMLoggerInfo(@"Setting Integrated Only...");
         retval = [GSMux setMode:GSSwitcherModeForceIntegrated];
+        if (retval) [_prefs setLastExplicitMode:GSPowerSourceBasedSwitchingModeIntegrated];
     }
 
     if (sender == discreteOnly) { 
         GTMLoggerInfo(@"Setting Discrete Only...");
         retval = [GSMux setMode:GSSwitcherModeForceDiscrete];
+        if (retval) [_prefs setLastExplicitMode:GSPowerSourceBasedSwitchingModeDiscrete];
     }
 
     if (sender == dynamicSwitching) {
         GTMLoggerInfo(@"Setting Dynamic Switching...");
         retval = [GSMux setMode:GSSwitcherModeDynamicSwitching];
+        if (retval) [_prefs setLastExplicitMode:GSPowerSourceBasedSwitchingModeDynamic];
     }
 
     // Only change status in case of GPU switch success.

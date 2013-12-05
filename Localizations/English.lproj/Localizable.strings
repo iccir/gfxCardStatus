@@ -29,6 +29,7 @@
 "PrefUpdate"			= "Check for updates at startup";
 "PrefGrowl"				= "Use Growl to display GPU change notifications";
 "PrefStartup"			= "Load gfxCardStatus at startup";
+"PrefLastMode"	     	= "On launch, attempt to switch to last mode";
 "PrefLog"				= "Log diagnostic messages to the console";
 "PrefRestoreState"		= "Restore last used mode at startup";
 "PrefPowerSwitching"	= "Use power source-based switching";

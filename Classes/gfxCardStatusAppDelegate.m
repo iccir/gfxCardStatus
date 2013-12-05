@@ -91,6 +91,21 @@
     // Check for updates if the user has them enabled.
     if ([_prefs shouldCheckForUpdatesOnStartup])
         [updater checkForUpdatesInBackground];
+
+    // Check to see if we should use the last explicitly set mode
+    if ([_prefs shouldUseLastExplicitModeOnLaunch]) {
+        // Attempt to switch to Integrated Only if desired (and possible)
+        if ([_prefs lastExplicitMode] == GSPowerSourceBasedSwitchingModeIntegrated) {
+            NSArray *taskList = [GSProcess getTaskList];
+            if (taskList.count == 0) {
+                [GSMux setMode:GSSwitcherModeForceIntegrated];
+            }
+
+        // Attempt to switch to Discrete Only if desired (should always be possible)
+        } else if ([_prefs lastExplicitMode] == GSPowerSourceBasedSwitchingModeDiscrete) {
+            [GSMux setMode:GSSwitcherModeForceDiscrete];
+        }
+    }
 }
 
 #pragma mark - Termination Notifications

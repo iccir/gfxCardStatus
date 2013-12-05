@@ -33,6 +33,11 @@ typedef enum {
 - (BOOL)shouldUsePowerSourceBasedSwitching;
 - (BOOL)shouldUseImageIcons;
 - (BOOL)shouldUseSmartMenuBarIcons;
+
+- (BOOL)shouldUseLastExplicitModeOnLaunch;
+- (void)setLastExplicitMode:(GSPowerSourceBasedSwitchingMode)mode;
+- (GSPowerSourceBasedSwitchingMode)lastExplicitMode;
+
 - (GSPowerSourceBasedSwitchingMode)modeForACAdapter;
 - (GSPowerSourceBasedSwitchingMode)modeForBattery;
 
